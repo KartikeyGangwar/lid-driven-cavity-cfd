@@ -3,7 +3,7 @@
 High-resolution finite-difference solver for the 2D incompressible
 lid-driven cavity problem using the streamfunction–vorticity formulation.
 
-![Showcase](figures/lid_driven_showcase_centerline_Re1000_N251.png)
+![Showcase](figures/lid_driven_cavity_showcase_Re1000.png)
 
 ## Features
 - Streamfunction–vorticity formulation
