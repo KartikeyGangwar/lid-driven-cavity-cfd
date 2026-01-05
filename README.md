@@ -35,3 +35,11 @@ python plot_from_npz.py
 This implementation is intended for educational and reference purposes.
 It emphasizes numerical clarity, physical correctness, and reproducibility.
 It does not claim methodological novelty.
+
+**Reference**  
+Ghia, U., Ghia, K. N., & Shin, C. T. (1982). *High-Re solutions for incompressible flow using the Navier–Stokes equations and a multigrid method*. Journal of Computational Physics, 48(3), 387–411.
+
+## Related Work
+
+- Physics-Informed Neural Network (PINN) solver for the same problem:  
+  [Fluid-Dynamics-PINNs](https://github.com/KartikeyGangwar/Fluid-Dynamics-PINNs)
