@@ -22,7 +22,7 @@ Generate plots from a saved solution:
 ```bash
 python plot_from_npz.py
 ```
-##Notes
+## Notes
 
 This implementation is intended for educational and reference purposes.
 It does not claim methodological novelty.
