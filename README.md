@@ -49,3 +49,22 @@ Ghia, U., Ghia, K. N., & Shin, C. T. (1982). *High-Re solutions for incompressib
 
 - Physics-Informed Neural Network (PINN) solver for the same problem:  
   [Fluid-Dynamics-PINNs](https://github.com/KartikeyGangwar/Fluid-Dynamics-PINNs)
+
+## Citation
+
+If you use this solver, code, or generated data in your research, please cite:
+
+**Kartikey Singh (2026).**  
+*A Reference Finite-Difference Solver for the 2D Lid-Driven Cavity Flow.*  
+Zenodo. https://doi.org/10.5281/zenodo.18312938
+
+### BibTeX
+```bibtex
+@software{singh_lid_cavity_2026,
+  author       = {Singh, Kartikey},
+  title        = {A Reference Finite-Difference Solver for the 2D Lid-Driven Cavity Flow},
+  year         = {2026},
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.18312938},
+  url          = {https://doi.org/10.5281/zenodo.18312938}
+}
