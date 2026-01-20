@@ -1,5 +1,11 @@
 # Lid-Driven Cavity Flow Solver (2D)
 
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)
+![NumPy](https://img.shields.io/badge/NumPy-1.24+-013243.svg)
+![Matplotlib](https://img.shields.io/badge/Matplotlib-3.7+-11557c.svg)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18312938.svg)](https://doi.org/10.5281/zenodo.18312938)
+
 High-resolution finite-difference solver for the classical 2D incompressible
 lid-driven cavity problem, implemented using the streamfunction–vorticity formulation.
 
