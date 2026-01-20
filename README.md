@@ -60,9 +60,9 @@ Zenodo. https://doi.org/10.5281/zenodo.18312938
 
 ### BibTeX
 ```bibtex
-@software{singh_lid_cavity_2026,
+@software{gangwar2026solver,
   author       = {Singh, Kartikey},
-  title        = {A Reference Finite-Difference Solver for the 2D Lid-Driven Cavity Flow},
+  title        = {Lid-Driven Cavity Flow Solver (2D, Incompressible)},
   year         = {2026},
   publisher    = {Zenodo},
   doi          = {10.5281/zenodo.18312938},
