@@ -9,7 +9,9 @@
 
 High-resolution finite-difference solver for the classical 2D incompressible lid-driven cavity problem, implemented in the streamfunction–vorticity ($\psi$–$\omega$) formulation.
 
-![Showcase](figures/lid_driven_cavity_showcase_Re1000.png)
+| $\mathrm{Re} = 1000$ Benchmark | $\mathrm{Re} = 3200$ High-Reynolds Benchmark |
+| :---: | :---: |
+| ![Showcase Re1000](figures/lid_driven_cavity_showcase_Re1000.png) | ![Showcase Re3200](figures/lid_driven_cavity_showcase_Re3200.png) |
 
 ## Features
 

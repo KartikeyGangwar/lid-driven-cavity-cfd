@@ -57,12 +57,20 @@ GHIA_DATA = {
                          -0.20581, -0.21090, -0.15662, -0.10150, -0.06434, -0.04775, -0.04192, -0.03717, 0.00000]),
     'u_Re1000': np.array([1.00000, 0.65928, 0.57492, 0.51117, 0.46604, 0.33304, 0.18719, 0.05702,
                           -0.06080, -0.10648, -0.27805, -0.38289, -0.29730, -0.22220, -0.20196, -0.18109, 0.00000]),
+    'u_Re3200': np.array([1.00000, 0.53236, 0.48296, 0.46547, 0.46101, 0.34682, 0.19791, 0.07156,
+                          -0.05702, -0.10656, -0.24427, -0.34314, -0.41933, -0.42768, -0.41528, -0.39269, 0.00000]),
+    'u_Re5000': np.array([1.00000, 0.48223, 0.46120, 0.45992, 0.46036, 0.33556, 0.19456, 0.07283,
+                          -0.04302, -0.09140, -0.22445, -0.30836, -0.40435, -0.43501, -0.43643, -0.42878, 0.00000]),
     'x_v': np.array([1.0000, 0.9688, 0.9609, 0.9531, 0.9453, 0.9063, 0.8594, 0.8047,
                      0.5000, 0.2344, 0.2266, 0.1563, 0.0938, 0.0781, 0.0703, 0.0625, 0.0000]),
     'v_Re100': np.array([0.00000, -0.05906, -0.07391, -0.08864, -0.10313, -0.16914, -0.22445, -0.24533,
                          0.05454, 0.17527, 0.17507, 0.16077, 0.12317, 0.10890, 0.10090, 0.09233, 0.00000]),
     'v_Re1000': np.array([0.00000, -0.21388, -0.27669, -0.32079, -0.34228, -0.42665, -0.51692, -0.38598,
                           0.02526, 0.32627, 0.33304, 0.37095, 0.32627, 0.29012, 0.27485, 0.25686, 0.00000]),
+    'v_Re3200': np.array([0.00000, -0.32407, -0.38389, -0.41920, -0.43590, -0.47820, -0.52357, -0.54053,
+                          0.00945, 0.38324, 0.39088, 0.41496, 0.37801, 0.34184, 0.32622, 0.30690, 0.00000]),
+    'v_Re5000': np.array([0.00000, -0.38458, -0.43448, -0.45543, -0.46387, -0.49099, -0.52987, -0.55408,
+                          0.00838, 0.40028, 0.40797, 0.42951, 0.39276, 0.35414, 0.33784, 0.31818, 0.00000]),
 }
 
 
@@ -483,7 +491,7 @@ class LidDrivenCavitySolver:
         ax4 = plt.subplot(234)
         x_idx = np.argmin(np.abs(self.x - self.L / 2.0))
         ax4.plot(self.u[:, x_idx], self.y, 'b-', lw=2.2, label=f'FDM u at x={self.L/2:.2f}')
-        if self.lid_profile == 'constant' and self.Re in [100, 1000]:
+        if self.lid_profile == 'constant' and self.Re in [100, 1000, 3200, 5000]:
             ghia_u = GHIA_DATA[f'u_Re{self.Re}']
             ax4.scatter(ghia_u, GHIA_DATA['y_u'], color='black', s=25, zorder=5, label='Ghia et al. (1982)')
         ax4.set_xlabel('u-velocity')
@@ -496,7 +504,7 @@ class LidDrivenCavitySolver:
         ax5 = plt.subplot(235)
         y_idx = np.argmin(np.abs(self.y - self.L / 2.0))
         ax5.plot(self.x, self.v[y_idx, :], 'r-', lw=2.2, label=f'FDM v at y={self.L/2:.2f}')
-        if self.lid_profile == 'constant' and self.Re in [100, 1000]:
+        if self.lid_profile == 'constant' and self.Re in [100, 1000, 3200, 5000]:
             ghia_v = GHIA_DATA[f'v_Re{self.Re}']
             ax5.scatter(GHIA_DATA['x_v'], ghia_v, color='black', s=25, zorder=5, label='Ghia et al. (1982)')
         ax5.set_xlabel('x (horizontal)')
@@ -551,7 +559,7 @@ class LidDrivenCavitySolver:
         ax = axs[1]
         x_idx = np.argmin(np.abs(self.x - self.L / 2.0))
         ax.plot(self.u[:, x_idx], self.y, 'k-', lw=2.8, label=rf"$u(y)$ at $x = {self.L/2:.2f}$ (FDM)")
-        if self.lid_profile == 'constant' and self.Re in [100, 1000]:
+        if self.lid_profile == 'constant' and self.Re in [100, 1000, 3200, 5000]:
             ghia_u = GHIA_DATA[f'u_Re{self.Re}']
             ax.scatter(ghia_u, GHIA_DATA['y_u'], facecolors='none', edgecolors='red', s=45, lw=1.5,
                        label='Ghia et al. (1982) Benchmark')
