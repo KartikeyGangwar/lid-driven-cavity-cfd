@@ -85,7 +85,8 @@ class LidDrivenCavitySolver:
     - Automated pressure Poisson solver with Neumann zero-gradient boundary conditions.
     """
 
-    def __init__(self, N=129, Re=1000, lid_velocity=1.0, L=1.0, lid_profile='constant', poisson_solver='lu'):
+    def __init__(self, N=129, Re=1000, lid_velocity=1.0, L=1.0, lid_profile='constant',
+                 poisson_solver='lu', convection_scheme='central'):
         """
         Parameters:
         -----------
@@ -103,6 +104,9 @@ class LidDrivenCavitySolver:
         poisson_solver : str
             'lu': direct sparse LU factorized solve (fastest, exact).
             'sor': vectorized Red-Black Successive Over-Relaxation.
+        convection_scheme : str
+            'central': 2nd-order central differencing (recommended, zero artificial diffusion).
+            'upwind': 1st-order upwind differencing.
         """
         self.N = N
         self.M = N - 2
@@ -111,6 +115,7 @@ class LidDrivenCavitySolver:
         self.L = L
         self.lid_profile = lid_profile.lower()
         self.poisson_solver = poisson_solver.lower()
+        self.convection_scheme = convection_scheme.lower()
 
         # Grid parameters
         self.h = L / (N - 1)
@@ -290,22 +295,28 @@ class LidDrivenCavitySolver:
         P, denom = self.P_adi, self.denom_adi
         omega_old = self.omega.copy()
 
-        # 1. Explicit upwind convection
-        domega_dx = np.where(
-            self.u_c > 0,
-            (omega_old[1:-1, 1:-1] - omega_old[1:-1, :-2]) / h,
-            (omega_old[1:-1, 2:] - omega_old[1:-1, 1:-1]) / h
-        )
-        domega_dy = np.where(
-            self.v_c > 0,
-            (omega_old[1:-1, 1:-1] - omega_old[:-2, 1:-1]) / h,
-            (omega_old[2:, 1:-1] - omega_old[1:-1, 1:-1]) / h
-        )
+        # 1. Convection terms
+        if self.convection_scheme == 'central':
+            # 2nd-order Central Differencing (O(h^2), zero artificial viscosity)
+            domega_dx = (omega_old[1:-1, 2:] - omega_old[1:-1, :-2]) / (2.0 * h)
+            domega_dy = (omega_old[2:, 1:-1] - omega_old[:-2, 1:-1]) / (2.0 * h)
+        else:
+            # 1st-order Upwind Differencing
+            domega_dx = np.where(
+                self.u_c > 0,
+                (omega_old[1:-1, 1:-1] - omega_old[1:-1, :-2]) / h,
+                (omega_old[1:-1, 2:] - omega_old[1:-1, 1:-1]) / h
+            )
+            domega_dy = np.where(
+                self.v_c > 0,
+                (omega_old[1:-1, 1:-1] - omega_old[:-2, 1:-1]) / h,
+                (omega_old[2:, 1:-1] - omega_old[1:-1, 1:-1]) / h
+            )
         conv = self.u_c * domega_dx + self.v_c * domega_dy
 
-        # 2. Step 1: Implicit X (row sweeps), Explicit Y
+        # 2. Step 1: Implicit X (row sweeps), Explicit Y (Peaceman-Rachford half-step dt/2)
         diff_y = (nu / (h**2)) * (omega_old[2:, 1:-1] + omega_old[:-2, 1:-1] - 2.0 * omega_old[1:-1, 1:-1])
-        RHS_x = omega_old[1:-1, 1:-1] + dt * (diff_y - conv)
+        RHS_x = omega_old[1:-1, 1:-1] + (0.5 * dt) * (diff_y - conv)
 
         # Boundary closures on left (col 0) and right (col -1)
         RHS_x[:, 0] -= A * omega_old[1:-1, 0]
@@ -325,9 +336,9 @@ class LidDrivenCavitySolver:
         omega_star = self.omega.copy()
         omega_star[1:-1, 1:-1] = omega_star_inner
 
-        # 3. Step 2: Implicit Y (col sweeps), Explicit X
+        # 3. Step 2: Implicit Y (col sweeps), Explicit X (Peaceman-Rachford half-step dt/2)
         diff_x = (nu / (h**2)) * (omega_star[1:-1, 2:] + omega_star[1:-1, :-2] - 2.0 * omega_star[1:-1, 1:-1])
-        RHS_y = omega_star[1:-1, 1:-1] + dt * (diff_x - conv)
+        RHS_y = omega_star[1:-1, 1:-1] + (0.5 * dt) * (diff_x - conv)
 
         # Boundary closures on bottom (row 0) and top (row -1)
         RHS_y[0, :] -= A * omega_star[0, 1:-1]
@@ -600,7 +611,8 @@ class LidDrivenCavitySolver:
                 'nu': self.nu,
                 'dt': self.dt,
                 'lid_profile': self.lid_profile,
-                'poisson_solver': self.poisson_solver
+                'poisson_solver': self.poisson_solver,
+                'convection_scheme': self.convection_scheme
             },
             'coordinates': {
                 'x': self.x,
@@ -643,7 +655,8 @@ class LidDrivenCavitySolver:
             u=self.u, v=self.v, p=self.p,
             vortex_x=vx, vortex_y=vy,
             Re=self.Re, N=self.N,
-            lid_profile=self.lid_profile
+            lid_profile=self.lid_profile,
+            convection_scheme=self.convection_scheme
         )
         print(f"[SUCCESS] Flow fields NumPy archive saved: {npz_name}")
 
@@ -659,6 +672,8 @@ if __name__ == '__main__':
                         help="Top wall velocity profile: 'constant' (Ghia benchmark) or 'regularized' (singularity-free)")
     parser.add_argument('--solver', type=str, default='lu', choices=['lu', 'sor'],
                         help="Streamfunction Poisson solver: 'lu' (precomputed sparse LU, exact) or 'sor' (RB-SOR)")
+    parser.add_argument('--convection', type=str, default='central', choices=['central', 'upwind'],
+                        help="Convective scheme: 'central' (2nd-order, no false diffusion) or 'upwind' (1st-order)")
     parser.add_argument('--max_iterations', type=int, default=25000, help="Maximum solver iterations (default: 25000)")
     parser.add_argument('--tolerance', type=float, default=1e-5, help="Vorticity convergence tolerance (default: 1e-5)")
     parser.add_argument('--no_plots', action='store_true', help="Suppress interactive plot windows")
@@ -670,7 +685,8 @@ if __name__ == '__main__':
         N=args.N,
         Re=args.Re,
         lid_profile=args.lid_profile,
-        poisson_solver=args.solver
+        poisson_solver=args.solver,
+        convection_scheme=args.convection
     )
 
     converged, iters = solver.solve(
