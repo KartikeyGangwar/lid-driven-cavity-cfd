@@ -100,7 +100,7 @@ python plot_from_npz.py --file flow_fields_Re1000_N251.npz --no_show
 ## Related Work
 
 - Physics-Informed Neural Network (PINN) solver for the same problem:  
-  [Fluid-Dynamics-PINNs](https://github.com/KartikeyGangwar/Fluid-Dynamics-PINNs)
+  [pinn-fluid-formulations](https://github.com/KartikeyaGangwar/pinn-fluid-formulations)
 
 ---
 
