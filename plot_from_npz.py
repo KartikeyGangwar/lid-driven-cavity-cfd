@@ -45,7 +45,7 @@ def get_vortex_center(psi, x, y):
     return x[idx[1]], y[idx[0]]
 
 
-def create_showcase_plots(data, filename, save=True):
+def create_showcase_plots(data, filename, save=True, show=True):
     """Create and display showcase plots for lid-driven cavity flow."""
     # -----------------------------
     # Extract data
@@ -154,7 +154,10 @@ def create_showcase_plots(data, filename, save=True):
         plt.savefig(out, bbox_inches="tight", facecolor="white")
         print(f"[SUCCESS] Saved: {out}")
 
-    plt.show()
+    if show:
+        plt.show()
+    else:
+        plt.close()
 
 # ---------------------------------------------------------------------
 # Main execution
@@ -168,6 +171,7 @@ if __name__ == "__main__":
         # DEFAULT FILE FOR NOTEBOOK USE
         file_path = "flow_fields_Re1000_N251.npz"
         print(f"[INFO] Notebook detected. Using default file: {file_path}")
+        show_plot = True
     else:
         parser = argparse.ArgumentParser(
             description="Plot lid-driven cavity solution from .npz file"
@@ -176,8 +180,13 @@ if __name__ == "__main__":
             "--file", type=str, required=True,
             help="Path to .npz file containing saved flow fields"
         )
+        parser.add_argument(
+            "--no_show", action="store_true",
+            help="Save plot to file without displaying interactive GUI window"
+        )
         args = parser.parse_args()
         file_path = args.file
+        show_plot = not args.no_show
 
     data = np.load(file_path, allow_pickle=True)
-    create_showcase_plots(data, filename=file_path)
+    create_showcase_plots(data, filename=file_path, show=show_plot)
